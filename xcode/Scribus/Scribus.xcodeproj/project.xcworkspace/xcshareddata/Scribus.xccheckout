@@ -10,17 +10,35 @@
 	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
+<<<<<<< HEAD
 		<key>11d20701-8431-0410-a711-e3c959e3b870++505</key>
 		<string>svn+ssh://canvas.scribus.eu/svn/trunk</string>
 		<key>E01ECEFC2DCDF4156236A5A59E2BED2F0F18DA12</key>
 		<string>svn+ssh://canvas.scribus.eu/svn/https://github.com/andreas-vox/ScribusCTL.git</string>
+=======
+<<<<<<< HEAD
+		<key>E01ECEFC2DCDF4156236A5A59E2BED2F0F18DA12</key>
+		<string>https://github.com/andreas-vox/ScribusCTL</string>
+=======
+		<key>11d20701-8431-0410-a711-e3c959e3b870++505</key>
+		<string>svn+ssh://canvas.scribus.eu/svn/trunk</string>
+		<key>11d20701-8431-0410-a711-e3c959e3b870++59</key>
+		<string>svn+ssh://canvas.scribus.eu/svn/https://github.com/andreas-vox/ScribusCTL.git</string>
+		<key>E01ECEFC2DCDF4156236A5A59E2BED2F0F18DA12</key>
+		<string>svn+ssh://canvas.scribus.eu/svn</string>
+>>>>>>> e63d6de... sync with svn r20300
+>>>>>>> c7f685a... sync with svn r20300
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>xcode/Scribus/Scribus.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
+<<<<<<< HEAD
 		<key>11d20701-8431-0410-a711-e3c959e3b870++505</key>
 		<string>../../../../..</string>
+=======
+<<<<<<< HEAD
+>>>>>>> c7f685a... sync with svn r20300
 		<key>E01ECEFC2DCDF4156236A5A59E2BED2F0F18DA12</key>
 		<string>../../../..</string>
 	</dict>
@@ -32,15 +50,38 @@
 		<string>svn+ssh://canvas.scribus.eu/svn</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
+<<<<<<< HEAD
 	<string>svn+ssh://canvas.scribus.eu/svn</string>
+=======
+	<string>https://github.com/andreas-vox/ScribusCTL</string>
+=======
+		<key>11d20701-8431-0410-a711-e3c959e3b870++505</key>
+		<string>../../../../..</string>
+		<key>11d20701-8431-0410-a711-e3c959e3b870++59</key>
+		<string>../../../..</string>
+		<key>E01ECEFC2DCDF4156236A5A59E2BED2F0F18DA12</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>11d20701-8431-0410-a711-e3c959e3b870++505</key>
+		<string>svn+ssh://canvas.scribus.eu/svn</string>
+		<key>11d20701-8431-0410-a711-e3c959e3b870++59</key>
+		<string>svn+ssh://canvas.scribus.eu/svn</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>svn+ssh://canvas.scribus.eu/svn/https:/github.com/andreas-vox/ScribusCTL.git/xcode/Scribus/Scribus.xcodeproj/project.xcworkspace</string>
+>>>>>>> e63d6de... sync with svn r20300
+>>>>>>> c7f685a... sync with svn r20300
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>E01ECEFC2DCDF4156236A5A59E2BED2F0F18DA12</string>
+	<string>11d20701-8431-0410-a711-e3c959e3b870++59</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+<<<<<<< HEAD
 			<string>public.vcs.subversion</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>11d20701-8431-0410-a711-e3c959e3b870++505</string>
@@ -49,19 +90,47 @@
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+=======
+<<<<<<< HEAD
+>>>>>>> c7f685a... sync with svn r20300
 			<string>public.vcs.git</string>
+=======
+			<string>public.vcs.subversion</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>E01ECEFC2DCDF4156236A5A59E2BED2F0F18DA12</string>
+			<string>11d20701-8431-0410-a711-e3c959e3b870++505</string>
 			<key>IDESourceControlWCCName</key>
+<<<<<<< HEAD
 			<string>Scribus</string>
+=======
+			<string></string>
+>>>>>>> c7f685a... sync with svn r20300
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.subversion</string>
+<<<<<<< HEAD
+=======
+>>>>>>> e63d6de... sync with svn r20300
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>11d20701-8431-0410-a711-e3c959e3b870++59</string>
+			<key>IDESourceControlWCCName</key>
+<<<<<<< HEAD
+			<string>ScribusCTL</string>
+=======
+			<string>Scribus</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+>>>>>>> c7f685a... sync with svn r20300
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>E01ECEFC2DCDF4156236A5A59E2BED2F0F18DA12</string>
 			<key>IDESourceControlWCCName</key>
 			<string>Scribus</string>
+<<<<<<< HEAD
+=======
+>>>>>>> e63d6de... sync with svn r20300
+>>>>>>> c7f685a... sync with svn r20300
 		</dict>
 	</array>
 </dict>
