@@ -2436,7 +2436,7 @@ QImage PageItem::DrawObj_toImage(double maxSize, int options)
 	m_Doc->guidesPrefs().framesShown = false;
 	QImage retImg = QImage(qMax(qRound(igWidth * sc), 1), qMax(qRound(igHeight * sc), 1), QImage::Format_ARGB32_Premultiplied);
 	retImg.fill( qRgba(0, 0, 0, 0) );
-	ScPainter *painter = new ScPainter(&retImg, retImg.width(), retImg.height(), 1, 0);
+	ScPainter *painter = new ScScreenPainter(&retImg, retImg.width(), retImg.height(), 1, 0);
 	painter->setZoomFactor(sc);
 	painter->save();
 	painter->translate(igXpos, igYpos);
@@ -2465,7 +2465,7 @@ QImage PageItem::DrawObj_toImage(QList<PageItem*> &emG, double scaling)
 	m_Doc->guidesPrefs().framesShown = false;
 	QImage retImg = QImage(qRound(gWidth * scaling), qRound(gHeight * scaling), QImage::Format_ARGB32_Premultiplied);
 	retImg.fill( qRgba(0, 0, 0, 0) );
-	ScPainter *painter = new ScPainter(&retImg, retImg.width(), retImg.height(), 1, 0);
+	ScPainter *painter = new ScScreenPainter(&retImg, retImg.width(), retImg.height(), 1, 0);
 	painter->setZoomFactor(scaling);
 	for (int em = 0; em < emG.count(); ++em)
 	{
@@ -2552,7 +2552,7 @@ void PageItem::SetQColor(QColor *tmp, QString colorName, double shad)
     sets xadvance to the advance width without kerning. If more than one glyph
     is generated, kerning is included in all but the last xadvance.
 */
-double PageItem::layoutGlyphs(const QString& chars,int index, GlyphRun& glyphrun)
+double PageItem::layoutGlyphs(const QString& chars,int firstChar, int lastChar, GlyphRun& glyphrun)
 {
 	double retval = 0.0;
 
@@ -2660,8 +2660,8 @@ double PageItem::layoutGlyphs(const QString& chars,int index, GlyphRun& glyphrun
 //			if (layout.yadvance > lastLayout.yadvance)
 //				lastLayout.yadvance = layout.yadvance;
 		}
-		glyphrun.setFirstChar(index);
-		glyphrun.setLastChar(index);
+		glyphrun.setFirstChar(firstChar);
+		glyphrun.setLastChar(lastChar);
 		glyphrun.glyphs().append(layout);
 
 	}

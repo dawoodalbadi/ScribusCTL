@@ -1814,7 +1814,7 @@ void PageItem_TextFrame::layout()
 			//			glyphs->yadvance = 0;
 
             GlyphRun& currentRun(current.glyphRuns.last());
-			layoutGlyphs(chstr,a , currentRun);
+			layoutGlyphs(chstr, a, a, currentRun);
 			if (currentRun.glyphs().isEmpty())
                 continue;
 
