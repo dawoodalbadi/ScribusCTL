@@ -213,7 +213,7 @@ ScScreenPainter::ScScreenPainter( QImage *target, unsigned int w, unsigned int h
 	m_width = w;
 	m_height= h;
 	m_stroke = QColor(0,0,0);
-	strokeMode = 0;
+	m_strokeMode = 0;
 	maskMode = 0;
 	m_fill = QColor(0,0,0);
 	fill_trans = 1.0;
@@ -461,7 +461,7 @@ void ScScreenPainter::setFillMode( int fill )
 
 void ScScreenPainter::setStrokeMode( int stroke )
 {
-	strokeMode = stroke;
+	m_strokeMode = stroke;
 }
 
 void ScScreenPainter::setGradient(VGradient::VGradientType mode, FPoint orig, FPoint vec, FPoint foc, double scale, double skew)
@@ -602,7 +602,7 @@ void ScScreenPainter::strokePath()
 {
 //	if( LineWidth == 0 )
 //		return;
-	if (strokeMode != 0)
+	if (m_strokeMode != 0)
 		strokePathHelper();
 }
 
@@ -1786,7 +1786,7 @@ void ScScreenPainter::strokePathHelper()
 		cairo_set_line_join( m_cr, CAIRO_LINE_JOIN_BEVEL );
 	else if( PLineJoin == Qt::MiterJoin )
 		cairo_set_line_join( m_cr, CAIRO_LINE_JOIN_MITER );
-	if (strokeMode == 3)
+	if (m_strokeMode == 3)
 	{
 		cairo_push_group(m_cr);
 		cairo_set_antialias(m_cr, CAIRO_ANTIALIAS_NONE);
@@ -1818,7 +1818,7 @@ void ScScreenPainter::strokePathHelper()
 		setRasterOp(m_blendModeStroke);
 		cairo_paint_with_alpha (m_cr, stroke_trans);
 	}
-	else if (strokeMode == 2)
+	else if (m_strokeMode == 2)
 	{
 		cairo_push_group(m_cr);
 		cairo_pattern_t *pat;

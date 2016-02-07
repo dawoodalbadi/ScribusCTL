@@ -70,6 +70,7 @@ public:
 	virtual void setFillRule( bool fillRule  ) = 0;
 	virtual bool fillRule( ) = 0;
 	virtual void setFillMode( int fill  ) = 0;
+	virtual int strokeMode() = 0;
 	virtual void setStrokeMode( int stroke  ) = 0;
 	virtual void setGradient( VGradient::VGradientType mode, FPoint orig, FPoint vec, FPoint foc, double scale, double skew ) = 0;
 	virtual void setPattern(ScPattern *pattern, double scaleX, double scaleY, double offsetX, double offsetY, double rotation, double skewX, double skewY, bool mirrorX, bool mirrorY ) = 0;
@@ -181,6 +182,7 @@ public:
 	 void setFillRule( bool fillRule );
 	 bool fillRule() { return m_fillRule; }
 	 void setFillMode( int fill );
+	 int strokeMode() { return m_strokeMode; }
 	 void setStrokeMode( int stroke );
 	 void setGradient( VGradient::VGradientType mode, FPoint orig, FPoint vec, FPoint foc, double scale, double skew);
 	 void setPattern(ScPattern *pattern, double scaleX, double scaleY, double offsetX, double offsetY, double rotation, double skewX, double skewY, bool mirrorX, bool mirrorY);
@@ -188,7 +190,6 @@ public:
 	 void setMaskMode( int mask );
 	 void setGradientMask( VGradient::VGradientType mode, FPoint orig, FPoint vec, FPoint foc, double scale, double skew);
 	 void setPatternMask(ScPattern *pattern, double scaleX, double scaleY, double offsetX, double offsetY, double rotation, double skewX, double skewY, bool mirrorX, bool mirrorY);
-
 	 void set4ColorGeometry(FPoint p1, FPoint p2, FPoint p3, FPoint p4, FPoint c1, FPoint c2, FPoint c3, FPoint c4);
 	 void set4ColorColors(QColor col1, QColor col2, QColor col3, QColor col4);
 	 void setDiamondGeometry(FPoint p1, FPoint p2, FPoint p3, FPoint p4, FPoint c1, FPoint c2, FPoint c3, FPoint c4, FPoint c5);
@@ -333,7 +334,7 @@ private:
 	QColor m_stroke;
 	double stroke_trans;
 	double LineWidth;
-	int strokeMode;				// 0 = none, 1 = solid, 2 = gradient 3 = pattern
+	int m_strokeMode;				// 0 = none, 1 = solid, 2 = gradient 3 = pattern
 	int maskMode;				// 0 = none, 1 = gradient 2 = pattern
 	double mask_patternScaleX;
 	double mask_patternScaleY;
