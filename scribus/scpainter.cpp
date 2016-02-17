@@ -17,195 +17,62 @@ for which a new license (GPL+exception) is in place.
 #include <math.h>
 #include <QDebug>
 
+
 ScPainter::~ScPainter()
 {}
 
-void ScScreenPainter::drawGlyph(GlyphRun layout)
+void ScScreenPainter::drawGlyph(const GlyphLayout gl, const ScFace font, double fontSize)
 {
-    const CharStyle& style(layout.style());
-    const ScFace font = style.font();
+	save();
+	bool fr = fillRule();
+	setFillRule(false);
+	FPointArray outline = font.glyphOutline(gl.glyph);
+	scale((gl.scaleH * fontSize / 100.00), (gl.scaleV * fontSize / 100.00));
+	setupPolygon(&outline, true);
+	if (outline.size() > 3)
+		fillPath();
+	setFillRule(fr);
+	restore();
+}
 
-    for (int i = 0; i < layout.glyphs().count(); ++i)
-    {
-        const GlyphLayout& glyphLayout(layout.glyphs()[i]);
-        uint glyph = glyphLayout.glyph;
+void ScScreenPainter::drawGlyphOutline(const GlyphLayout gl, const ScFace font, double fontSize, double outlineWidth)
+{
+	save();
+	bool fr = fillRule();
+	setFillRule(false);
+	FPointArray outline = font.glyphOutline(gl.glyph);
+	double scaleH = gl.scaleH * fontSize / 100.00;
+	double scaleV = gl.scaleV * fontSize / 100.00;
+	scale(scaleH, scaleV);
+	setupPolygon(&outline, true);
+	if (outline.size() > 3)
+	{
+		setLineWidth((fontSize * gl.scaleV * outlineWidth / 10000.0) / scaleV);
+		strokePath();
+	}
+	setFillRule(fr);
+	restore();
+}
 
-
-        if (glyph == (ScFace::CONTROL_GLYPHS + SpecialChars::NBSPACE.unicode()) ||
-                 glyph == (ScFace::CONTROL_GLYPHS + 32))
-        {
-            glyph = font.char2CMap(QChar(' '));
-        }
-        else if (glyph == (ScFace::CONTROL_GLYPHS + SpecialChars::NBHYPHEN.unicode()))
-        {
-            glyph = font.char2CMap(QChar('-'));
-        }
-        else if (glyph >= ScFace::CONTROL_GLYPHS || (style.effects() & ScLayout_SuppressSpace))
-        {
-            //		qDebug("drawGlyphs: skipping %d", glyph);
-            // all those are empty
-			translate(glyphLayout.xadvance, 0);
-            continue;
-        }
-
-        //	if (font.canRender(QChar(glyph)))
-        {
-            FPointArray gly = font.glyphOutline(glyph);
-            // Do underlining first so you can get typographically correct
-            // underlines when drawing a white outline
-            if (((style.effects() & ScStyle_Underline) || ((style.effects() & ScStyle_UnderlineWords) && glyph != font.char2CMap(QChar(' ')))) && (style.strokeColor() != CommonStrings::None))
-            {
-                double st, lw;
-                if ((style.underlineOffset() != -1) || (style.underlineWidth() != -1))
-                {
-                    if (style.underlineOffset() != -1)
-                        st = (style.underlineOffset() / 1000.0) * (font.descent(style.fontSize() / 10.0));
-                    else
-                        st = font.underlinePos(style.fontSize() / 10.0);
-                    if (style.underlineWidth() != -1)
-                        lw = (style.underlineWidth() / 1000.0) * (style.fontSize() / 10.0);
-                    else
-                        lw = qMax(font.strokeWidth(style.fontSize() / 10.0), 1.0);
-                }
-                else
-                {
-                    st = font.underlinePos(style.fontSize() / 10.0);
-                    lw = qMax(font.strokeWidth(style.fontSize() / 10.0), 1.0);
-                }
-                if (style.baselineOffset() != 0)
-                    st += (style.fontSize() / 10.0) * glyphLayout.scaleV * (style.baselineOffset() / 1000.0);
-				QColor tmpC = pen();
-				setPen(brush());
-				setLineWidth(lw);
-                if (style.effects() & ScStyle_Subscript)
-					drawLine(FPoint(glyphLayout.xoffset, glyphLayout.yoffset - st),
-                                FPoint(glyphLayout.xoffset + glyphLayout.xadvance, glyphLayout.yoffset - st));
-                else
-					drawLine(FPoint(glyphLayout.xoffset, -st),
-                                FPoint(glyphLayout.xoffset + glyphLayout.xadvance, -st));
-				setPen(tmpC);
-            }
-            if (gly.size() > 3)
-            {
-                if (glyph == 0)
-                {
-                    //				qDebug() << QString("glyph 0: (%1,%2) * %3 %4 + %5").arg(glyphLayout.xoffset).arg(glyphLayout.yoffset).arg(glyphLayout.scaleH).arg(glyphLayout.scaleV).arg(glyphLayout.xadvance));
-                }
-				save();
-				translate(glyphLayout.xoffset, glyphLayout.yoffset - ((style.fontSize() / 10.0) * glyphLayout.scaleV));
-               /* if (m_isReversed)
-                {
-                    p->scale(-1, 1);
-                    p->translate(-glyphLayout.xadvance, 0);
-                }*/
-                if (style.baselineOffset() != 0)
-					translate(0, -(style.fontSize() / 10.0) * (style.baselineOffset() / 1000.0));
-                double glxSc = glyphLayout.scaleH * style.fontSize() / 100.00;
-                double glySc = glyphLayout.scaleV * style.fontSize() / 100.0;
-				scale(glxSc, glySc);
-                //			p->setFillMode(1);
-				bool fr = fillRule();
-				setFillRule(false);
-                //			double	a = gly.point(0).x();
-                //			double	b = gly.point(0).y();
-                //			double	c = gly.point(3).x();
-                //			double	d = gly.point(3).y();
-                //			qDebug() << QString("drawglyphs: %1 (%2,%3) (%4,%5) scaled %6,%7 trans %8,%9")
-                //				   .arg(gly.size()).arg(a).arg(b).arg(c).arg(d)
-                //				   .arg(p->worldMatrix().m11()).arg(p->worldMatrix().m22()).arg(p->worldMatrix().dx()).arg(p->worldMatrix().dy());
-				setupPolygon(&gly, true);
-                /*if (m_Doc->layerOutline(LayerID))
-                {
-                    p->save();
-                    p->setPen(m_Doc->layerMarker(LayerID), 0.5, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
-                    p->setFillMode(ScPainter::None);
-                    p->setBrushOpacity(1.0);
-                    p->setPenOpacity(1.0);
-                    p->strokePath();
-                    p->restore();
-                    p->setFillRule(fr);
-                    p->restore();
-                    continue;
-                }*/
-                if (glyph == 0)
-                {
-					setPen(PrefsManager::instance()->appPrefs.displayPrefs.controlCharColor, 1, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
-					setLineWidth(style.fontSize() * glyphLayout.scaleV * style.outlineWidth() * 2 / 10000.0);
-					strokePath();
-                }
-                else if ((font.isStroked()) && (style.strokeColor() != CommonStrings::None) && ((style.fontSize() * glyphLayout.scaleV * style.outlineWidth() / 10000.0) != 0))
-                {
-					QColor tmp = brush();
-					setPen(tmp, 1, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
-					setLineWidth(style.fontSize() * glyphLayout.scaleV * style.outlineWidth() / 10000.0);
-					strokePath();
-                }
-                else
-                {
-                    if ((style.effects() & ScStyle_Shadowed) && (style.strokeColor() != CommonStrings::None))
-                    {
-						save();
-						translate((style.fontSize() * glyphLayout.scaleH * style.shadowXOffset() / 10000.0) / glxSc, -(style.fontSize() * glyphLayout.scaleV * style.shadowYOffset() / 10000.0) / glySc);
-						QColor tmp = brush();
-						setBrush(pen());
-						setupPolygon(&gly, true);
-						fillPath();
-						setBrush(tmp);
-						restore();
-						setupPolygon(&gly, true);
-                    }
-                    if (style.fillColor() != CommonStrings::None)
-						fillPath();
-                    if ((style.effects() & ScStyle_Outline) && (style.strokeColor() != CommonStrings::None) && ((style.fontSize() * glyphLayout.scaleV * style.outlineWidth() / 10000.0) != 0))
-                    {
-						setLineWidth((style.fontSize() * glyphLayout.scaleV * style.outlineWidth() / 10000.0) / glySc);
-						strokePath();
-                    }
-                }
-				setFillRule(fr);
-				restore();
-            }
-            else {
-                //			qDebug() << "drawGlyphs: empty glyph" << glyph;
-            }
-            if ((style.effects() & ScStyle_Strikethrough) && (style.strokeColor() != CommonStrings::None))
-            {
-                double st, lw;
-                if ((style.strikethruOffset() != -1) || (style.strikethruWidth() != -1))
-                {
-                    if (style.strikethruOffset() != -1)
-                        st = (style.strikethruOffset() / 1000.0) * (font.ascent(style.fontSize() / 10.0));
-                    else
-                        st = font.strikeoutPos(style.fontSize() / 10.0);
-                    if (style.strikethruWidth() != -1)
-                        lw = (style.strikethruWidth() / 1000.0) * (style.fontSize() / 10.0);
-                    else
-                        lw = qMax(font.strokeWidth(style.fontSize() / 10.0), 1.0);
-                }
-                else
-                {
-                    st = font.strikeoutPos(style.fontSize() / 10.0);
-                    lw = qMax(font.strokeWidth(style.fontSize() / 10.0), 1.0);
-                }
-                if (style.baselineOffset() != 0)
-                    st += (style.fontSize() / 10.0) * glyphLayout.scaleV * (style.baselineOffset() / 1000.0);
-				setPen(brush());
-				setLineWidth(lw);
-				drawLine(FPoint(glyphLayout.xoffset, glyphLayout.yoffset - st),
-                            FPoint(glyphLayout.xoffset + glyphLayout.xadvance, glyphLayout.yoffset - st));
-            }
-        }
-        /*	else
-         {
-         p->setLineWidth(1);
-         p->setPen(red);
-         p->setBrush(red);
-         p->setFillMode(1);
-         p->drawRect(glyphs.xoffset, glyphs.yoffset - (style.fontSize() / 10.0) * glyphs.scaleV , (style.fontSize() / 10.0) * glyphs.scaleH, (style.fontSize() / 10.0) * glyphs.scaleV);
-         }
-         */
-		 translate(glyphLayout.xadvance, 0);
-    }
+void ScScreenPainter::drawShadow(const GlyphLayout gl, const ScFace font, double fontSize, double xoff, double yoff)
+{
+	save();
+	uint glyphId = gl.glyph;
+	FPointArray gly = font.glyphOutline(glyphId);
+	double scaleH = gl.scaleH * fontSize / 100.00;
+	double scaleV = gl.scaleV * fontSize / 100.00;
+	scale(scaleH, scaleV);
+	if (gly.size() > 3)
+	{
+		QColor tmp = brush();
+		translate((fontSize * gl.scaleH * xoff / 10000.0) / scaleH, -(fontSize * gl.scaleV * yoff / 10000.0) / scaleV);
+		setBrush(pen());
+		setupPolygon(&gly, true);
+		fillPath();
+		setBrush(tmp);
+		setupPolygon(&gly, true);
+	}
+	restore();
 }
 
 ScScreenPainter::ScScreenPainter( QImage *target, unsigned int w, unsigned int h, double transparency, int blendmode )
@@ -220,7 +87,7 @@ ScScreenPainter::ScScreenPainter( QImage *target, unsigned int w, unsigned int h
 	stroke_trans = 1.0;
 	m_fillRule = true;
 	fillMode = 1;
-	LineWidth = 1.0;
+	m_lineWidth = 1.0;
 	m_offset = 0;
 	m_layerTransparency = transparency;
 	m_blendMode = blendmode;
@@ -449,16 +316,6 @@ void ScScreenPainter::closePath()
 	cairo_close_path( m_cr );
 }
 
-void ScScreenPainter::setFillRule( bool fillRule )
-{
-	m_fillRule = fillRule;
-}
-
-void ScScreenPainter::setFillMode( int fill )
-{
-	fillMode = fill;
-}
-
 void ScScreenPainter::setStrokeMode( int stroke )
 {
 	m_strokeMode = stroke;
@@ -616,25 +473,6 @@ QColor ScScreenPainter::brush()
 	return m_fill;
 }
 
-void ScScreenPainter::setPen( const QColor &c )
-{
-	m_stroke = c;
-}
-
-void ScScreenPainter::setPen( const QColor &c, double w, Qt::PenStyle st, Qt::PenCapStyle ca, Qt::PenJoinStyle jo )
-{
-	m_stroke = c;
-	LineWidth = w;
-	PLineEnd = ca;
-	PLineJoin = jo;
-	m_offset = 0;
-	getDashArray(st, w, m_array);
-}
-
-void ScScreenPainter::setLineWidth( double w )
-{
-	LineWidth = w;
-}
 
 void ScScreenPainter::setPenOpacity( double op )
 {
@@ -648,10 +486,6 @@ void ScScreenPainter::setDash(const QVector<double>& array, double ofs)
 	m_offset = ofs;
 }
 
-void ScScreenPainter::setBrush( const QColor &c )
-{
-	m_fill = c;
-}
 
 void ScScreenPainter::setBrushOpacity( double op )
 {
@@ -1765,10 +1599,10 @@ void ScScreenPainter::strokePathHelper()
 {
 	cairo_save( m_cr );
 	cairo_set_operator(m_cr, CAIRO_OPERATOR_OVER);
-	if( LineWidth == 0 )
+	if( m_lineWidth == 0 )
 		cairo_set_line_width( m_cr, 1.0 / m_zoomFactor );
 	else
-		cairo_set_line_width( m_cr, LineWidth );
+		cairo_set_line_width( m_cr, m_lineWidth );
 	if( m_array.count() > 0 )
 		cairo_set_dash( m_cr, m_array.data(), m_array.count(), m_offset);
 	else
@@ -1796,7 +1630,7 @@ void ScScreenPainter::strokePathHelper()
 		cairo_pattern_set_filter(m_pat, CAIRO_FILTER_GOOD);
 		cairo_matrix_t matrix;
 		QTransform qmatrix;
-		qmatrix.translate(-LineWidth / 2.0, -LineWidth / 2.0);
+		qmatrix.translate(-m_lineWidth / 2.0, -m_lineWidth / 2.0);
 		qmatrix.translate(patternOffsetX, patternOffsetY);
 		qmatrix.rotate(patternRotation);
 		qmatrix.shear(-patternSkewX, patternSkewY);
@@ -2660,3 +2494,6 @@ void ScScreenPainter::blur(int radius)
 	delete [] stack;
 	cairo_surface_mark_dirty(data);
 }
+
+
+
